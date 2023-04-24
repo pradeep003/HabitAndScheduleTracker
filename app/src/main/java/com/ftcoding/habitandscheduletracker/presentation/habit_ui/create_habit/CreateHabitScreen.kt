@@ -55,6 +55,7 @@ fun CreateHabitScreen(
         DialogsStateHandle()
     }
 
+    // show error message state
     val messageBarState = remember {
         viewModel.messageBarState.value
     }
@@ -404,8 +405,9 @@ fun CreateHabitScreen(
                         .align(Alignment.End)
                         .padding(8.dp)
                 ) {
+
                     Text(
-                        text = "CANCEL",
+                        text = "OK",
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
@@ -416,16 +418,6 @@ fun CreateHabitScreen(
                                         false
                                     )
                                 )
-                            }
-                    )
-                    Text(
-                        text = "OK",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .clickable {
-
                             }
                     )
                     Spacer(modifier = Modifier.width(8.dp))

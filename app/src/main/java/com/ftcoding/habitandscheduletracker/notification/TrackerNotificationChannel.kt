@@ -4,17 +4,15 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.ftcoding.habitandscheduletracker.notification.receiver.ScheduleNotificationReceiver
 import com.ftcoding.habitandscheduletracker.util.HabitConstants.NOTIFICATION_DESC
 import com.ftcoding.habitandscheduletracker.util.HabitConstants.NOTIFICATION_TITLE
-import java.time.DayOfWeek
 import java.time.LocalTime
 import kotlin.jvm.optionals.getOrDefault
 
 
-const val PRIMARY_CHANNEL_ID = "tracker_notification_channel"
+const val PRIMARY_CHANNEL_ID = "schedule_tracker_notification_channel"
 
 private lateinit var notificationManager: NotificationManager
 
@@ -35,6 +33,7 @@ fun Context.showNotificationWithFullScreenIntent(
             .setContentText(eventDesc)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setVibrate(longArrayOf(0, 800, 200, 1200, 300, 2000, 400, 4000, 500, 5000))
             .setFullScreenIntent(getFullScreenIntent(eventName, eventDesc), true)
     } else {
         NotificationCompat.Builder(this, channelId)
@@ -92,23 +91,12 @@ fun Context.scheduleNotification(
 ) {
     val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    Log.e("time schedule", "${eventStartHour}: $eventStartMin")
-
     val calendar = Calendar.getInstance()
-//    Log.e(
-//        "week - ${calendar.get(Calendar.DATE)}:${calendar.get(Calendar.HOUR_OF_DAY)} = ${
-//            calendar.get(
-//                Calendar.MONTH
-//            )
-//        }", calendar.get(Calendar.DAY_OF_WEEK).toString()
-//    )
     val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
 
     val nextWeekDayTarget = repeatDayList.toList().stream().filter { it ->
         it > dayOfWeek
     }.findFirst().getOrDefault(1)
-
-    Log.e(repeatDayList.toString(), nextWeekDayTarget.toString())
 
     val eventScheduleTime = LocalTime.of(eventStartHour, eventStartMin)
 
@@ -131,7 +119,7 @@ fun Context.scheduleNotification(
     calendar.set(Calendar.MINUTE, eventStartMin)
     calendar.set(Calendar.SECOND, 0)
 
-
+    // schedule alarm at exact time
     with(alarmManager) {
         setExact(
             AlarmManager.RTC_WAKEUP,

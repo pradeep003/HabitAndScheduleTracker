@@ -13,6 +13,7 @@ import com.ftcoding.habitandscheduletracker.presentation.habit_ui.habit_screen.H
 import com.ftcoding.habitandscheduletracker.presentation.schedule_ui.create_schedule.CreateScheduleScreen
 import com.ftcoding.habitandscheduletracker.presentation.schedule_ui.schedule_screen.ScheduleScreen
 import com.ftcoding.habitandscheduletracker.presentation.setting_ui.SettingScreen
+import com.ftcoding.habitandscheduletracker.presentation.setting_ui.components.SelectRingtoneScreen
 
 @Composable
 fun HomeNavGraph(navController: NavHostController, paddingValues: PaddingValues) {
@@ -30,6 +31,10 @@ fun HomeNavGraph(navController: NavHostController, paddingValues: PaddingValues)
 
         composable(Screen.SettingScreen.route) {
             SettingScreen(navController = navController)
+        }
+
+        composable(Screen.SelectRingtoneScreen.route) {
+            SelectRingtoneScreen(navController = navController)
         }
     }
 }

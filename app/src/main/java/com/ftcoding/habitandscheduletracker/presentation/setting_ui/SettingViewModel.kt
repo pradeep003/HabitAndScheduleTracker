@@ -2,18 +2,18 @@ package com.ftcoding.habitandscheduletracker.presentation.setting_ui
 
 import android.content.ContentUris
 import android.content.Context
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ftcoding.habitandscheduletracker.data.domain.models.data.MusicModel
+import com.ftcoding.habitandscheduletracker.data.domain.models.schedule.Event
 import com.ftcoding.habitandscheduletracker.data.domain.models.user.User
+import com.ftcoding.habitandscheduletracker.presentation.data_source.use_cases.schedule.ScheduleUseCases
 import com.ftcoding.habitandscheduletracker.presentation.data_source.use_cases.user.UserUseCases
 import com.ftcoding.habitandscheduletracker.util.HabitConstants.USER_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
-    private val userUseCases: UserUseCases
+    private val userUseCases: UserUseCases,
+    private val scheduleUseCases: ScheduleUseCases
 ) : ViewModel() {
 
     init {
@@ -36,20 +37,18 @@ class SettingViewModel @Inject constructor(
 
 
     fun saveNewUserName(username: String) {
-        Log.e("username", username)
         // change username in user state
         _user.value = user.value.copy(userName = username)
 
         // than save username
         viewModelScope.launch {
-            Log.e("user saved", user.value.userName)
             userUseCases.insertUserUseCase.invoke(
                 user.value
             )
         }
     }
 
-    fun refreshData () {
+    private fun refreshData () {
         viewModelScope.launch {
             // fetch user details
             userUseCases.getUserUseCase.invoke().collect { list ->
@@ -63,7 +62,6 @@ class SettingViewModel @Inject constructor(
                             return@first false
                         }
                     }
-                    Log.e("check", user.value.toString())
                 }
             }
 
@@ -72,7 +70,6 @@ class SettingViewModel @Inject constructor(
     }
 
     fun saveNewUserProfileImage(uri: Uri) {
-        Log.e("bitmap", uri.toString())
         // change username in user state
         _user.value = user.value.copy(image = uri.toString())
         // than save username
@@ -84,7 +81,6 @@ class SettingViewModel @Inject constructor(
     }
 
     fun getUserProfileImage() : String? {
-        Log.e("image", user.value.image.toString())
         return user.value.image
     }
 
@@ -93,23 +89,24 @@ class SettingViewModel @Inject constructor(
     private val _ringtone = mutableStateOf(MusicModel(contentUri = Uri.EMPTY, -1, ""))
     val ringtone: State<MusicModel> = _ringtone
 
-    // set the new ringtone in viewmodel state
+    // set the new ringtone in viewModel state
     fun setNewRingtone(ringtone: MusicModel) {
         _ringtone.value = ringtone
     }
 
     // save the new ringtone in ViewModel
     fun saveNewRingtone(ringtonePath: String) {
-
+        _user.value = user.value.copy(ringtonePath = ringtonePath)
+        viewModelScope.launch {
+            userUseCases.insertUserUseCase.invoke(user.value)
+        }
     }
-
 
     // theme primary color for app
 
     fun setPrimaryColor(color: String) {
         _user.value = user.value.copy(themeColor = color)
         viewModelScope.launch {
-            Log.e("color saved", user.value.themeColor)
             userUseCases.insertUserUseCase.invoke(user.value)
         }
     }
@@ -119,9 +116,24 @@ class SettingViewModel @Inject constructor(
     fun setDarkMode(isDarkMode: Boolean) {
         _user.value = user.value.copy(darkMode = isDarkMode)
         viewModelScope.launch {
-            Log.e("color saved", user.value.darkMode.toString())
             userUseCases.insertUserUseCase.invoke(user.value)
         }
+    }
+
+    private val _list = mutableStateOf<List<Event>>(emptyList())
+    val list: State<List<Event>> = _list
+
+     fun getAllScheduleEvent(): List<Event>? {
+        var eventList : List<Event>? = null
+        viewModelScope.launch {
+            scheduleUseCases.getAllScheduleEvents.invoke().collect { list ->
+                if (list.isNotEmpty()) {
+                    _list.value = list
+                    eventList = list
+                }
+            }
+        }
+        return eventList
     }
 
 

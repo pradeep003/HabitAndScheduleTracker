@@ -24,7 +24,6 @@ class UserDatabaseTest {
 
     private lateinit var userDatabase: UserDatabase
     private lateinit var userDao: UserDao
-    private lateinit var bitmap: Bitmap
 
     @Before
     fun setUp() {
@@ -33,14 +32,6 @@ class UserDatabaseTest {
         userDatabase = Room.inMemoryDatabaseBuilder(context, UserDatabase::class.java).build()
         userDao = userDatabase.userDao
 
-        val drawable = ContextCompat.getDrawable(context, R.drawable.trophy)
-        bitmap = Bitmap.createBitmap(
-            drawable!!.intrinsicWidth,
-            drawable.intrinsicHeight, Bitmap.Config.ARGB_8888
-        )
-        val canvas = android.graphics.Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
-        drawable.draw(canvas)
 
     }
 
@@ -52,7 +43,7 @@ class UserDatabaseTest {
 
     @Test
     fun addUser_Assert_IsUsernameSame() = runTest {
-        val user = User(USER_ID, "Pradeep", bitmap)
+        val user = User(USER_ID, "Pradeep", "bitmap")
         userDao.insertUser(user)
 
         val getUser = userDao.getUser().collect{

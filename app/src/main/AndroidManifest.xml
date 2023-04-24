@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
@@ -18,7 +17,7 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_icon_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.HabitAndScheduleTracker"
@@ -26,13 +25,14 @@
         <activity
             android:name=".presentation.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.HabitAndScheduleTracker">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
         <activity android:name=".notification.AlarmLockScreenActivity"
@@ -41,8 +41,6 @@
             android:showOnLockScreen="true"
             android:turnScreenOn="true"
             android:theme="@style/Theme.HabitAndScheduleTracker.NoActionBar">
-
-
         </activity>
 
         <receiver android:name=".notification.receiver.ScheduleNotificationReceiver"
@@ -55,7 +53,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".notification.HabitNotificationReceiver"
+        <receiver android:name=".notification.receiver.HabitNotificationReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

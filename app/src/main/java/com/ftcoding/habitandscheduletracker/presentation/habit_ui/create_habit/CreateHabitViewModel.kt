@@ -11,9 +11,11 @@ import com.ftcoding.habitandscheduletracker.data.domain.models.habit.HabitModel
 import com.ftcoding.habitandscheduletracker.data.domain.models.habit.InvalidHabitException
 import com.ftcoding.habitandscheduletracker.data.domain.models.habit.ResetList
 import com.ftcoding.habitandscheduletracker.data.domain.models.habit.TimerModel
+import com.ftcoding.habitandscheduletracker.data.domain.models.user.User
 import com.ftcoding.habitandscheduletracker.presentation.data_source.use_cases.habit.HabitUseCases
 import com.ftcoding.habitandscheduletracker.presentation.util.state.MessageBarState
 import com.ftcoding.habitandscheduletracker.presentation.util.state.StandardTextFieldState
+import com.ftcoding.habitandscheduletracker.util.HabitConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -25,7 +27,6 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateHabitViewModel @Inject constructor(
     private val habitUseCases: HabitUseCases
-
 ) : ViewModel() {
 
 
@@ -55,7 +56,7 @@ class CreateHabitViewModel @Inject constructor(
             }
     }
 
-    private val _currentHabitId = mutableStateOf(0)
+    private val _currentHabitId = mutableStateOf(-1)
     val currentHabitId: State<Int> = _currentHabitId
 
     private fun setHabitId(id: Int) {
@@ -121,19 +122,37 @@ class CreateHabitViewModel @Inject constructor(
 
     fun saveScheduleEvent(newHabit: (HabitModel) -> Unit) {
         viewModelScope.launch {
-            val habitEvent = HabitModel(
-                habitTitle = titleState.value.text,
-                habitDesc = descState.value.text,
-                habitStartTime = startTimeState.value.text,
-                notify = notifyTypeState.value,
-                habitIcon = habitIcon.value,
-                habitColor = habitColor.value
-            )
+
             try {
-                val newId = habitUseCases.insertHabitUseCases.invoke(habitEvent).toInt()
-                habitUseCases.getHabitModelByIdUseCase.invoke(newId)?.let {
-                    newHabit(it)
+                if (currentHabitId.value != -1) {
+                    val habitEvent = HabitModel(
+                        habitId = currentHabitId.value,
+                        habitTitle = titleState.value.text,
+                        habitDesc = descState.value.text,
+                        habitStartTime = startTimeState.value.text,
+                        notify = notifyTypeState.value,
+                        habitIcon = habitIcon.value,
+                        habitColor = habitColor.value
+                    )
+                    val newId = habitUseCases.insertHabitUseCases.invoke(habitEvent).toInt()
+                    habitUseCases.getHabitModelByIdUseCase.invoke(newId)?.let {
+                        newHabit(it)
+                    }
+                } else {
+                    val habitEvent = HabitModel(
+                        habitTitle = titleState.value.text,
+                        habitDesc = descState.value.text,
+                        habitStartTime = startTimeState.value.text,
+                        notify = notifyTypeState.value,
+                        habitIcon = habitIcon.value,
+                        habitColor = habitColor.value
+                    )
+                    val newId = habitUseCases.insertHabitUseCases.invoke(habitEvent).toInt()
+                    habitUseCases.getHabitModelByIdUseCase.invoke(newId)?.let {
+                        newHabit(it)
+                    }
                 }
+
             } catch (e: InvalidHabitException) {
                 onError(e.message ?: "Couldn't save new Event")
             }
@@ -199,11 +218,12 @@ class CreateHabitViewModel @Inject constructor(
         _selectedDate.value = date
     }
 
-
+    // trigger message bar state
     fun onError(message: String) {
         messageBarState.value.addError(message)
     }
 
+    // trigger message bar state
     fun onSuccess(message: String) {
         messageBarState.value.addSuccess(message)
     }

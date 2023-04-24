@@ -18,11 +18,6 @@ import com.ftcoding.habitandscheduletracker.util.HabitConstants.NOTIFICATION_TIT
 class ScheduleNotificationReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
 
-        if ((Intent.ACTION_BOOT_COMPLETED) == intent?.action) {
-            Log.e("receiver", "re")
-
-        }
-
         intent?.getBooleanExtra(NOTIFICATION_IS_ALARM, true).let { isAlarm ->
             intent?.getIntExtra(NOTIFICATION_ID, 0).let { id ->
                 intent?.getStringExtra(NOTIFICATION_TITLE)?.let { eventName ->
@@ -51,6 +46,22 @@ class ScheduleNotificationReceiver : BroadcastReceiver() {
                                                         eventIcon = eventIcon,
                                                         repeatDayList = repeatDayList
                                                     )
+                                                }
+
+                                                if ((Intent.ACTION_BOOT_COMPLETED) == intent.action) {
+                                                    // if device reboot reschedule notification
+                                                    if (id != null) {
+                                                        context?.scheduleNotification(
+                                                            isAlarm = isAlarm ?: true,
+                                                            id = id,
+                                                            eventName = eventName,
+                                                            eventDesc = eventDesc,
+                                                            eventStartHour = eventStartHour,
+                                                            eventStartMin = eventStartMin,
+                                                            eventIcon = eventIcon,
+                                                            repeatDayList = repeatDayList
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }

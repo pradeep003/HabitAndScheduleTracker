@@ -8,6 +8,7 @@ import android.graphics.Rect
 import android.media.MediaPlayer
 import android.media.Ringtone
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.*
 import android.util.Log
 import android.view.GestureDetector
@@ -36,23 +37,28 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.*
 import com.ftcoding.habitandscheduletracker.notification.activity_utils.turnScreenOffAndKeyguardOn
 import com.ftcoding.habitandscheduletracker.notification.activity_utils.turnScreenOnAndKeyguardOff
+import com.ftcoding.habitandscheduletracker.presentation.data_source.use_cases.user.UserUseCases
 import com.ftcoding.habitandscheduletracker.presentation.ui.theme.HabitAndScheduleTrackerTheme
 import com.ftcoding.habitandscheduletracker.util.HabitConstants.NOTIFICATION_DESC
 import com.ftcoding.habitandscheduletracker.util.HabitConstants.NOTIFICATION_TITLE
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.io.File
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
+// Screen will display as full screen intent as a alarm
 @AndroidEntryPoint
 class AlarmLockScreenActivity : ComponentActivity() {
 
+    @Inject
+    lateinit var userUseCases: UserUseCases
 
     private lateinit var vibrator: Vibrator
-    private lateinit var mediaPlayer: MediaPlayer
     private lateinit var ringtone: Ringtone
 
 
@@ -82,10 +88,8 @@ class AlarmLockScreenActivity : ComponentActivity() {
         val pattern = longArrayOf(0, 800, 200, 1200, 300, 2000, 400, 4000, 500, 5000)
         vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0))
 
-        // play sound with vibration
-        val notifyMusic = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-        ringtone = RingtoneManager.getRingtone(applicationContext, notifyMusic)
-        ringtone.play()
+        // if user have selected ringtone
+        var userRingtone =  ""
 
         setContent {
 
@@ -93,6 +97,24 @@ class AlarmLockScreenActivity : ComponentActivity() {
 
             val activity = context as Activity
             activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+            LaunchedEffect(key1 = true) {
+                userUseCases.getUserUseCase.invoke().collect { list ->
+                    Log.e("lsit", list.toString())
+                    if (list.first().ringtonePath.isNotEmpty()) {
+                        userRingtone = list.first().ringtonePath
+                    }
+                }
+            }
+
+            // play sound with vibration
+            ringtone = if (userRingtone.isEmpty()) {
+                val notifyMusic = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                RingtoneManager.getRingtone(applicationContext, notifyMusic)
+            } else {
+                RingtoneManager.getRingtone(applicationContext, Uri.parse(userRingtone))
+            }
+            ringtone.play()
 
             HabitAndScheduleTrackerTheme() {
                 LockScreenContent(eventTitle ?: "", eventDesc ?: "") {

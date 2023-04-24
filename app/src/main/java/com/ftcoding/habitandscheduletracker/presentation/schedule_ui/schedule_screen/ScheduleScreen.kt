@@ -96,17 +96,11 @@ fun ScheduleScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    brush = Brush.verticalGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.primary,
-                            MaterialTheme.colorScheme.primaryContainer
-                        ),
-                    )
+                    color = MaterialTheme.colorScheme.primary
                 )
         ) {
 
             TopAppBar(
-
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("schedule_tag"),
@@ -132,7 +126,8 @@ fun ScheduleScreen(
                             painter = painter,
                             contentDescription = "user profile image",
                             modifier = Modifier
-                                .size(60.dp)
+                                .padding(horizontal = 10.dp)
+                                .size(40.dp)
                                 .clip(CircleShape),
                             contentScale = ContentScale.Crop
                         )
@@ -141,14 +136,12 @@ fun ScheduleScreen(
                             painter = painterResource(id = R.drawable.app_icon),
                             contentDescription = "user profile image",
                             modifier = Modifier
+                                .padding(horizontal = 10.dp)
                                 .size(40.dp)
                                 .clip(CircleShape),
                             contentScale = ContentScale.Crop
                         )
-
                     }
-
-
                 },
                 actions = {
                     IconButton(
@@ -195,7 +188,8 @@ fun ScheduleScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primaryContainer),
+                    .background(MaterialTheme.colorScheme.primary),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                 shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp),
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
@@ -214,13 +208,7 @@ fun ScheduleScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Log.e("changing v", viewModel.selectedDayEventList.value.toString())
-
-
-
-                Log.e("viewModel list", viewModel.list.value.toString())
                 ShowScheduleUi(events = viewModel.list.value, navController)
-//                ShowScheduleUi(list)
             }
         }
     }

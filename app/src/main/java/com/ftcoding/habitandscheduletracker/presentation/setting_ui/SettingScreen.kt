@@ -1,8 +1,6 @@
 package com.ftcoding.habitandscheduletracker.presentation.setting_ui
 
-import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
@@ -20,7 +18,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -29,18 +26,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.core.content.ContextCompat
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.ftcoding.habitandscheduletracker.R
+import com.ftcoding.habitandscheduletracker.notification.scheduleNotification
 import com.ftcoding.habitandscheduletracker.presentation.components.ColorPicker
-import com.ftcoding.habitandscheduletracker.presentation.setting_ui.components.SelectRingtoneDialog
+import com.ftcoding.habitandscheduletracker.presentation.ui.navigation.Screen
 import com.ftcoding.habitandscheduletracker.presentation.util.Constants.hexColorToIntColor
 import com.ftcoding.habitandscheduletracker.presentation.util.state.DialogState
 import com.ftcoding.habitandscheduletracker.presentation.util.state.DialogsStateHandle
-import java.net.URI
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,13 +53,13 @@ fun SettingScreen(
 
     // holding user image state
     val imageUri = remember {
-        mutableStateOf<String?>(viewModel.user.value.image)
+        mutableStateOf(viewModel.user.value.image)
     }
 
     val context = LocalContext.current
 
-    // launcher for selecting new image from device
 
+    // launcher for selecting new image from device
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) {uri ->
@@ -115,11 +112,8 @@ fun SettingScreen(
                     .padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-
-
 //                 if image uri is null show app icon else show saved image
                 if (viewModel.user.value.image != null) {
-                    Log.e("not null", URI.create(viewModel.getUserProfileImage()).toString())
                     val painter = rememberAsyncImagePainter(
                         ImageRequest.Builder(LocalContext.current)
                             .data(data = Uri.parse(viewModel.user.value.image))
@@ -189,12 +183,11 @@ fun SettingScreen(
 
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 // on pressing open images from device
                 Button(
                     elevation = ButtonDefaults.buttonElevation(8.dp),
-//                    onClick = { launcher.launch("image/*") }
                     onClick = {
                         launcher.launch(
                             PickVisualMediaRequest(
@@ -212,12 +205,23 @@ fun SettingScreen(
             }
         }
 
-
-        // refresh notification after reboot
-
+        // refresh all schedule event notification after reboot
         Button(
             elevation = ButtonDefaults.buttonElevation(8.dp),
-            onClick = { /*TODO*/ },
+            onClick = {
+                    viewModel.getAllScheduleEvent()?.forEach { event ->
+                        context.scheduleNotification(
+                            isAlarm = event.alarmType,
+                            id = event.eventId,
+                            eventName = event.name,
+                            eventDesc = event.description,
+                            eventStartHour = event.start.hour,
+                            eventStartMin = event.start.minute,
+                            eventIcon = event.icon,
+                            repeatDayList = event.repeatDayList.toIntArray()
+                        )
+                    }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
@@ -244,8 +248,7 @@ fun SettingScreen(
                 .padding(8.dp)
                 .height(54.dp)
                 .clickable {
-                    dialogState.setDialogState(DialogState.SelectRingtoneDialog(true))
-                    Log.e("click", dialogState.selectRingtoneDialog.toString())
+                    navController.navigate(Screen.SelectRingtoneScreen.route)
 
                 }
                 .padding(horizontal = 8.dp),
@@ -277,79 +280,6 @@ fun SettingScreen(
         )
 
         Spacer(modifier = Modifier.height(8.dp))
-
-        // check user want vibration on alarm
-//        Row(
-//            Modifier
-//                .fillMaxWidth()
-//                .padding(8.dp)
-//                .height(54.dp)
-//                .border(
-//                    1.dp,
-//                    MaterialTheme.colorScheme.onBackground,
-//                    MaterialTheme.shapes.small
-//                )
-//                .padding(vertical = 8.dp),
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//
-//            Icon(
-//                imageVector = Icons.Filled.Vibration,
-//                contentDescription = "vibration icon",
-//                modifier = Modifier.padding(start = 8.dp)
-//            )
-//
-//            Text(
-//                text = "Alarm to vibrate",
-//                style = MaterialTheme.typography.bodyMedium,
-//                modifier = Modifier
-//                    .padding(start = 16.dp)
-//                    .weight(1f)
-//            )
-//
-//            // get the alarmVibration state from viewModel
-//            // if user change value save it to viewModel state
-//            RadioButton(selected = viewModel.alarmVibration.value, onClick = {
-//                viewModel.setAlarmVibration(!viewModel.alarmVibration.value)
-//            })
-//        }
-//
-//        // check user want vibration on notification
-//        Row(
-//            Modifier
-//                .fillMaxWidth()
-//                .padding(8.dp)
-//                .height(56.dp)
-//                .background(MaterialTheme.colorScheme.surface)
-//                .border(
-//                    1.dp,
-//                    MaterialTheme.colorScheme.onBackground,
-//                    MaterialTheme.shapes.small
-//                )
-//                .padding(vertical = 8.dp),
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//
-//            Icon(
-//                imageVector = Icons.Filled.Vibration,
-//                contentDescription = "vibration icon",
-//                modifier = Modifier.padding(start = 8.dp)
-//            )
-//
-//            Text(
-//                text = "Notification to vibrate",
-//                style = MaterialTheme.typography.bodyMedium,
-//                modifier = Modifier
-//                    .padding(start = 16.dp)
-//                    .weight(1f)
-//            )
-//
-//            // get the alarmVibration state from viewModel
-//            // if user change value save it to viewModel state
-//            RadioButton(selected = viewModel.alarmVibration.value, onClick = {
-//                viewModel.setAlarmVibration(!viewModel.alarmVibration.value)
-//            })
-//        }
 
         // set theme primary color for app
         Column(
@@ -465,7 +395,7 @@ fun SettingScreen(
                 }) {
                 Text(
                     text = "Go to setting",
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onError
                 )
             }
@@ -476,21 +406,26 @@ fun SettingScreen(
 
 
 // if ringtone picker dialog state is true open selectRingtoneDialog
-    if (dialogState.selectRingtoneDialog) {
-
-        Dialog(onDismissRequest = {
-            dialogState.setDialogState(
-                DialogState.SelectRingtoneDialog(
-                    false
-                )
-            )
-        }) {
-            SelectRingtoneDialog {
-                dialogState.setDialogState(DialogState.SelectRingtoneDialog(false))
-            }
-        }
-
-    }
+//    if (dialogState.selectRingtoneDialog) {
+//
+//        Dialog(
+//            properties = DialogProperties(
+//                dismissOnBackPress = false,
+//                dismissOnClickOutside = false
+//            ),
+//            onDismissRequest = {
+//            dialogState.setDialogState(
+//                DialogState.SelectRingtoneDialog(
+//                    false
+//                )
+//            )
+//        }) {
+//            SelectRingtoneDialog {
+//                dialogState.setDialogState(DialogState.SelectRingtoneDialog(false))
+//            }
+//        }
+//
+//    }
 
 // if color picker dialog state is true open colorPickerDialog
     if (dialogState.colorDialogState) {
@@ -512,16 +447,4 @@ fun SettingScreen(
     }
 
 
-}
-
-fun getBitmapFromVectorDrawable(context: Context): Bitmap {
-    val drawable = ContextCompat.getDrawable(context, R.drawable.trophy)
-    val bitmap = Bitmap.createBitmap(
-        drawable!!.intrinsicWidth,
-        drawable.intrinsicHeight, Bitmap.Config.ARGB_8888
-    )
-    val canvas = android.graphics.Canvas(bitmap)
-    drawable.setBounds(0, 0, canvas.width, canvas.height)
-    drawable.draw(canvas)
-    return bitmap
 }

@@ -4,9 +4,11 @@ import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.SystemClock
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.ftcoding.habitandscheduletracker.data.domain.models.habit.HabitModel
+import com.ftcoding.habitandscheduletracker.notification.receiver.HabitNotificationReceiver
 import com.ftcoding.habitandscheduletracker.util.HabitConstants
 import java.text.SimpleDateFormat
 import java.util.*
@@ -55,10 +57,12 @@ fun Context.scheduleHabitNotification(
 
     val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
+    // Wake up the device to fire the alarm in 30 minutes, and every 1 day after that
     with(alarmManager) {
-        setExact(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
+        setInexactRepeating(
+            AlarmManager.ELAPSED_REALTIME_WAKEUP,
+            SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HALF_HOUR,
+            AlarmManager.INTERVAL_DAY,
             getReceiver(
                 habitId = habitModel.habitId,
                 habitName = habitModel.habitTitle,
@@ -84,51 +88,6 @@ private fun Context.getReceiver(
     )
 }
 
-class HabitNotificationReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) {
-
-        Log.e("receiver", "re")
-        if ((Intent.ACTION_BOOT_COMPLETED) == intent?.action) {
-            Log.e("receiver", "re")
-
-        }
-        intent?.getStringExtra("habit_title")?.let { habitName ->
-            intent.getStringExtra("habit_desc")?.let { habitDesc ->
-                intent.getIntExtra("habit_icon", HabitConstants.HABIT_ICON_LIST[0].icon)
-                    .let { habitIcon ->
-                        intent.getIntExtra("habit_id", 0).let { habitId ->
-                            // show how much day completed
-                            context?.showHabitNotification(
-                                notificationId = habitId,
-                                title = habitName,
-                                desc = habitDesc,
-                                icon = habitIcon
-                            )
-                        }
-
-                    }
-            }
-        }
-
-    }
-
-    companion object {
-        fun habitBuild(
-            context: Context,
-            habitId: Int,
-            habitName: String,
-            habitDesc: String,
-            habitIcon: Int
-        ): Intent {
-            return Intent(context, HabitNotificationReceiver::class.java).also {
-                it.putExtra("habit_id", habitId)
-                it.putExtra("habit_title", habitName)
-                it.putExtra("habit_desc", habitDesc)
-                it.putExtra("habit_icon", habitIcon)
-            }
-        }
-    }
-}
 
 
 private fun NotificationManager.buildHabitChannel() {

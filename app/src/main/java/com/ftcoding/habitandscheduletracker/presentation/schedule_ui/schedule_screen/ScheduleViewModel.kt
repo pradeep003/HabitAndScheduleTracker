@@ -5,7 +5,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ftcoding.habitandscheduletracker.data.domain.models.data.IconAndColor
 import com.ftcoding.habitandscheduletracker.data.domain.models.schedule.Event
 import com.ftcoding.habitandscheduletracker.data.domain.models.user.User
 import com.ftcoding.habitandscheduletracker.presentation.data_source.use_cases.schedule.ScheduleUseCases
@@ -54,6 +53,7 @@ class ScheduleViewModel @Inject constructor(
         Log.e("${date.dayOfWeek.value}", newEventList.toString())
     }
 
+    // get user setting detail state
    private val _userState = mutableStateOf(User())
     val userState : State<User> = _userState
 

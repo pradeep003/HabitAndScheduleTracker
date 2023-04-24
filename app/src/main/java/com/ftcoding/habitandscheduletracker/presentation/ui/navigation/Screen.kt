@@ -9,6 +9,8 @@ sealed class Screen (val route: String) {
     object SettingScreen: Screen("setting_screen")
     object SplashScreen: Screen("splash_screen")
     object HomeScreen: Screen("home_screen")
+
+    object SelectRingtoneScreen: Screen("ringtone_screen")
 }
 
 object Graph {

@@ -103,7 +103,6 @@ fun ColorPicker (
                     lightness = 1f
                 )
             ) { selectedColor->
-                Log.e("color", selectedColor)
                 newSelectedColor(selectedColor)
             }
 

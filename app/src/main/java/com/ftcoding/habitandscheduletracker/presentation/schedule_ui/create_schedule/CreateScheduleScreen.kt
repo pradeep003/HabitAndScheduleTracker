@@ -58,7 +58,6 @@ fun CreateScheduleScreen(
 ) {
 
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
 
     // message info bar
     val messageBarState = remember {
