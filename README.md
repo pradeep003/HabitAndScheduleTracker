@@ -30,12 +30,15 @@ Splash screen
 Setting screen
 <img src="https://user-images.githubusercontent.com/42691019/234079967-8a712dc2-51f5-478e-a1a4-a6dfc7a09f34.jpg" width="250"/>
 Schedule screen
-<img src="https://user-images.githubusercontent.com/42691019/234083725-cef319c8-eda6-40d2-b669-56b87720204d.jpg" width="250"/>
-create screen
+<img src="https://user-images.githubusercontent.com/42691019/234210931-3f0d928d-2c9b-4194-a86a-1c04685ae7ab.jpg" width="250"/>
 <img src="https://user-images.githubusercontent.com/42691019/234084131-f5595ec8-48cb-45a8-8577-a835cb1b53a0.jpg" width="250"/>
 tracker screen
 <img src="https://user-images.githubusercontent.com/42691019/234085841-10a8ca3a-cf4b-4930-b889-449b30c900eb.jpg" width="250"/>
+notification
+<img src="https://user-images.githubusercontent.com/42691019/234211474-b4ec5406-d87e-4658-8a3b-f44ae710869f.jpg" width="250"/>
 
-Note - The app is still in progress...
+
+Note - This app is still in progress...!
+
 
 
