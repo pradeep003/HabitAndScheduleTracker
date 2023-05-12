@@ -10,6 +10,7 @@ Easily schedule your days and track your bad habit frequency
 
 - Light/dark mode toggle
 - Clean and engaging ui
+- app glance widget for a quick lookup
 - Different screen for habit and schedule part
 - Alarm and notification to help user acheive schedule time
 - 21 days strategy to leave the bad habit
@@ -17,9 +18,11 @@ Easily schedule your days and track your bad habit frequency
 
 ## Tools used
 
-- Jetpack compose and kotlin
+- kotlin
+- Jetpack compose  
 - Room Database
 - Dagger-hilt
+- App glance widget
 - Android SDK 33
 - Material Theme 3 
 
@@ -36,6 +39,8 @@ tracker screen
 <img src="https://user-images.githubusercontent.com/42691019/234085841-10a8ca3a-cf4b-4930-b889-449b30c900eb.jpg" width="250"/>
 notification
 <img src="https://user-images.githubusercontent.com/42691019/234211474-b4ec5406-d87e-4658-8a3b-f44ae710869f.jpg" width="250"/>
+app glance widget
+<img src="https://github.com/pradeep003/HabitAndScheduleTracker/assets/42691019/5d925b98-ea2a-40e4-8d6a-62abe16dbe20" width="250"/>
 
 
 Note - This app is still in progress...!
