@@ -4,7 +4,11 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
+import com.ftcoding.habitandscheduletracker.R
 import com.ftcoding.habitandscheduletracker.notification.receiver.ScheduleNotificationReceiver
 import com.ftcoding.habitandscheduletracker.util.HabitConstants.NOTIFICATION_DESC
 import com.ftcoding.habitandscheduletracker.util.HabitConstants.NOTIFICATION_TITLE
@@ -26,23 +30,27 @@ fun Context.showNotificationWithFullScreenIntent(
     eventIcon: Int
 ) {
 
+    val drawable = ContextCompat.getDrawable(this, eventIcon)
+    val bitmap = drawable?.toBitmap()
+
     val builder = if (isAlarm) {
         NotificationCompat.Builder(this, channelId)
             .setSmallIcon(eventIcon)
+            .setLargeIcon(bitmap)
             .setContentTitle(eventName)
             .setContentText(eventDesc)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
-            .setVibrate(longArrayOf(0, 800, 200, 1200, 300, 2000, 400, 4000, 500, 5000))
             .setFullScreenIntent(getFullScreenIntent(eventName, eventDesc), true)
     } else {
         NotificationCompat.Builder(this, channelId)
             .setSmallIcon(eventIcon)
+            .setLargeIcon(bitmap)
             .setContentTitle(eventName)
             .setContentText(eventDesc)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
-
+            .setVibrate(longArrayOf(0, 800))
     }
 
     notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

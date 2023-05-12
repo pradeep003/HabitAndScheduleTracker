@@ -13,7 +13,7 @@ import com.ftcoding.habitandscheduletracker.data.domain.models.type_converter.Lo
 
 @Database(
     entities = [HabitModel::class, ResetList::class],
-    version = 13,
+    version = 17,
     exportSchema = false
 )
 @TypeConverters(ListTypeConverter::class, LocalDateConverter::class, LocalTimeConverter::class, BitmapTypeConverter::class)

@@ -2,10 +2,19 @@ package com.ftcoding.habitandscheduletracker.presentation.components
 
 import android.app.TimePickerDialog
 import android.content.Context
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import com.ftcoding.habitandscheduletracker.data.domain.models.habit.ResetList
 import com.ftcoding.habitandscheduletracker.presentation.util.Constants.longToHours
 import com.ftcoding.habitandscheduletracker.presentation.util.Constants.longToMinutes
+import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.util.*
@@ -59,6 +68,23 @@ fun TimePicker (
     timePickerDialog.setCanceledOnTouchOutside(false)
 
     // Todo: implement on cancel dialog
+
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MaterialTimePickers (
+    state: TimePickerState,
+    title: String = "Select Time",
+    onCancel: ()-> Unit,
+    onConfirm: (ResetList)-> Unit
+) : Unit {
+
+    val formatter = remember {
+        SimpleDateFormat("hh:mm a", Locale.getDefault())
+    }
+
 
 
 }

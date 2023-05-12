@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowLeft
 import androidx.compose.material.icons.filled.ArrowRight
@@ -95,7 +96,7 @@ fun MonthCalendar(
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(7),
-                modifier = Modifier.animateContentSize()
+                modifier = Modifier.animateContentSize(),
             ) {
 
                 items(7) {

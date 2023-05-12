@@ -1,7 +1,6 @@
 package com.ftcoding.habitandscheduletracker.presentation.schedule_ui.schedule_screen
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -20,9 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.ParentDataModifier
@@ -43,9 +40,8 @@ import com.ftcoding.habitandscheduletracker.R
 import com.ftcoding.habitandscheduletracker.data.domain.models.schedule.Event
 import com.ftcoding.habitandscheduletracker.presentation.components.DayWiseCalendar
 import com.ftcoding.habitandscheduletracker.presentation.components.MonthCalendar
-import com.ftcoding.habitandscheduletracker.presentation.util.Constants.hexColorToIntColor
 import com.ftcoding.habitandscheduletracker.presentation.ui.navigation.Screen
-import com.ftcoding.habitandscheduletracker.presentation.util.Constants.localTimeToTimestamp
+import com.ftcoding.habitandscheduletracker.presentation.util.Constants.hexColorToIntColor
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import kotlin.math.roundToInt
@@ -193,18 +189,26 @@ fun ScheduleScreen(
                 shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp),
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Filled.ClearAll,
-                    contentDescription = "clear all icon",
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .padding(start = 8.dp, end = 8.dp)
-                        .fillMaxWidth()
-                        .align(CenterHorizontally)
-                        .clickable {
-                            currentCalendar = !currentCalendar
-                        }
-                )
+//                Icon(
+//                    imageVector = Icons.Filled.ToggleOn,
+//                    contentDescription = "toggle between week calendar and month calendar",
+//                    tint = MaterialTheme.colorScheme.onBackground,
+//                    modifier = Modifier
+//                        .padding(start = 8.dp, end = 8.dp)
+//                        .fillMaxWidth()
+//                        .align(CenterHorizontally)
+//                        .clickable {
+//                            currentCalendar = !currentCalendar
+//                        }
+//                )
+
+                Switch(
+                    checked = currentCalendar,
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp).fillMaxWidth().align(
+                        CenterHorizontally).size(24.dp),
+                    onCheckedChange = {
+                        currentCalendar = !currentCalendar
+                })
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -251,24 +255,35 @@ fun BasicEvent(
             .fillMaxSize()
             .padding(end = 2.dp, bottom = 2.dp)
             .background(color = event.color.hexColorToIntColor, shape = MaterialTheme.shapes.medium)
-            .padding(4.dp)
+            .padding(vertical = 4.dp, horizontal = 6.dp)
             .clickable {
                 eventDialogState.value = true
             }
     ) {
 
-        Text(
-            text = "${event.start} - ${event.end}",
-            style = MaterialTheme.typography.labelMedium,
-            color = Color.White
-        )
+        Row( modifier = Modifier
+            .fillMaxWidth(),
+        verticalAlignment = CenterVertically) {
 
-        Text(
-            text = event.name,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
+            Image(painter = painterResource(id = event.icon), contentDescription = "event_icon", modifier = Modifier
+                .size(32.dp)
+                .padding(horizontal = 2.dp))
+
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "${event.start} - ${event.end}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.White
+                )
+
+                Text(
+                    text = event.name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+        }
 
         Text(
             text = event.description,
@@ -298,18 +313,29 @@ fun BasicEvent(
                     }
             ) {
 
-                Text(
-                    text = "${event.start.localTimeToTimestamp} - ${event.end.localTimeToTimestamp}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = Color.White
-                )
+                Row( modifier = Modifier
+                    .fillMaxWidth(),
+                    verticalAlignment = CenterVertically) {
 
-                Text(
-                    text = event.name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
+                    Image(painter = painterResource(id = event.icon), contentDescription = "event_icon", modifier = Modifier
+                        .size(32.dp)
+                        .padding(horizontal = 2.dp))
+
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "${event.start} - ${event.end}",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color.White
+                        )
+
+                        Text(
+                            text = event.name,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
 
                 Text(
                     text = event.description,
@@ -352,6 +378,7 @@ fun BasicEvent(
                             .clickable {
                                 // delete this schedule event
                                 viewModel.deleteScheduleEvent(event)
+                                eventDialogState.value = false
                             }
                     )
                     // close

@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.ftcoding.habitandscheduletracker.util.HabitConstants
 
+@kotlinx.serialization.Serializable
 @Entity(tableName = HabitConstants.HABIT_TABLE_NAME)
 data class HabitModel(
 
@@ -19,6 +20,9 @@ data class HabitModel(
 
     @ColumnInfo(name = HabitConstants.KEY_START_TIME)
     val habitStartTime: String,
+
+    @ColumnInfo(name = HabitConstants.KEY_LAST_RESET_TIME)
+    val habitLastResetTime: String,
 
     @ColumnInfo(name = HabitConstants.KEY_NOTIFY)
     val notify : Boolean = false,

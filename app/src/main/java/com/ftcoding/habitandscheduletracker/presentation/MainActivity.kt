@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -44,9 +45,7 @@ class MainActivity : ComponentActivity() {
             }
 
             // observe the changes made in setting
-            if (userUseCases.getUserUseCase.invoke()
-                    .collectAsState(initial = listOf(User())).value.isNotEmpty()
-            ) {
+            if (userUseCases.getUserUseCase.invoke().collectAsState(initial = emptyList()).value.isNotEmpty()) {
                 userUseCases.getUserUseCase.invoke()
                     .collectAsState(initial = listOf(User())).value.first {
                         if (it.userId == USER_ID) {
@@ -61,7 +60,7 @@ class MainActivity : ComponentActivity() {
 
             HabitAndScheduleTrackerTheme(
                 primaryColor = settingDetails.value.themeColor.hexColorToIntColor,
-                darkTheme = settingDetails.value.darkMode
+                darkTheme = if (isSystemInDarkTheme()) true else settingDetails.value.darkMode
             ) {
                 // A surface container using the 'background' color from the theme
                 Surface(

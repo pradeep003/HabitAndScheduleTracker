@@ -11,6 +11,8 @@ sealed class Screen (val route: String) {
     object HomeScreen: Screen("home_screen")
 
     object SelectRingtoneScreen: Screen("ringtone_screen")
+
+    object SelectHabitTrackerWidgetScreen: Screen("select_habit_tracker_widget_screen")
 }
 
 object Graph {

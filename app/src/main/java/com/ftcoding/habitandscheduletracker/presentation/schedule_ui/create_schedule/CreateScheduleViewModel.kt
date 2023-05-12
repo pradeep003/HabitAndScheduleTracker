@@ -142,14 +142,12 @@ class CreateScheduleViewModel @Inject constructor(
                 eventId = scheduleUseCases.insertScheduleEvent(
                     event
                 ).toInt()
-//                getEventById(eventId = eventId)
-                scheduleUseCases.getScheduleEventById.invoke(eventId)?.let { newSavedEvent(it) }
+                scheduleUseCases.getScheduleEventById.invoke(eventId)?.let {
+                    newSavedEvent(it) }
                 // send event to callback
             } catch (e: Exception) {
                 messageBarState.value.addError(e.message ?: "Couldn't save schedule")
             }
-
-
         }
     }
 

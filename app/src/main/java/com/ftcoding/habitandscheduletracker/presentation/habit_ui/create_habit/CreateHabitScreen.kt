@@ -11,6 +11,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -150,231 +152,195 @@ fun CreateHabitScreen(
         // display message bar state ui when new message
         MessageBar(messageBarState)
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
+        LazyColumn(modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp)) {
 
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = viewModel.titleState.value.text,
-                onValueChange = {
-                    viewModel.setHabitTitle(StandardTextFieldState(text = it))
-                },
-                textStyle = MaterialTheme.typography.bodyMedium,
-                label = {
-                    Text(
-                        text = "Habit Title",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Edit,
-                        contentDescription = "habit_title_icon",
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                },
-                singleLine = true,
-                colors = TextFieldDefaults.textFieldColors(MaterialTheme.colorScheme.onBackground)
-            )
+            item {
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = viewModel.descState.value.text,
-                onValueChange = {
-                    viewModel.setDescTitle(StandardTextFieldState(text = it))
-                },
-                textStyle = MaterialTheme.typography.bodyMedium,
-                label = {
-                    Text(
-                        text = "Encouragement",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Description,
-                        contentDescription = "habit_description_icon",
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                },
-                singleLine = false,
-                minLines = 5,
-                colors = TextFieldDefaults.textFieldColors(MaterialTheme.colorScheme.onBackground)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        if (viewModel.currentHabitId.value != 0) {
-                            viewModel.onError("Can't change start date and time")
-                        } else {
-                            dialogState.setDialogState(DialogState.StartTimePickerDialog(true))
-
-                        }
-                    },
-                value = viewModel.startTimeState.value.text,
-                onValueChange = {},
-                readOnly = true,
-                enabled = false,
-                textStyle = MaterialTheme.typography.bodyMedium,
-                label = {
-                    Text(
-                        text = "Start Time",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Timer,
-                        contentDescription = "habit_start_time_icon",
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                },
-                singleLine = true,
-                colors = TextFieldDefaults.textFieldColors(
-                    MaterialTheme.colorScheme.onBackground,
-                    disabledTextColor = MaterialTheme.colorScheme.onBackground
-                )
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .background(MaterialTheme.colorScheme.surface)
-                    .border(
-                        1.dp,
-                        MaterialTheme.colorScheme.onBackground,
-                        MaterialTheme.shapes.small
-                    )
-                    .padding(vertical = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Icon(
-                    imageVector = Icons.Filled.Notifications,
-                    contentDescription = "notification icon",
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-
-                Text(
-                    text = "Notification",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                        .weight(1f)
-                )
-
-                RadioButton(selected = viewModel.notifyTypeState.value, onClick = {
-                    if (!viewModel.notifyTypeState.value && !hasNotificationPermission) {
-                        dialogState.setDialogState(DialogState.PermissionDialogState(true))
-                    }
-
-                    viewModel.setNotifyTypeState(!viewModel.notifyTypeState.value)
-                })
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-
-                Text(
-                    text = "Select Color",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Right
-                )
-
-                Box(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(54.dp)
-                        .border(
-                            1.dp,
-                            MaterialTheme.colorScheme.onBackground,
-                            MaterialTheme.shapes.small
-                        )
-                        .background(
-                            viewModel.habitColor.value.hexColorToIntColor,
-                            MaterialTheme.shapes.small
-                        )
-                        .clickable {
-                            dialogState.setDialogState(
-                                DialogState.ColorSelectionDialogState(
-                                    true
-                                )
+                ) {
+
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = viewModel.titleState.value.text,
+                        onValueChange = {
+                            viewModel.setHabitTitle(StandardTextFieldState(text = it))
+                        },
+                        textStyle = MaterialTheme.typography.bodyMedium,
+                        label = {
+                            Text(
+                                text = "Habit Title",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
-                        }
-                )
-            }
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Edit,
+                                contentDescription = "habit_title_icon",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        singleLine = true,
+                        colors = TextFieldDefaults.textFieldColors(MaterialTheme.colorScheme.onBackground)
+                    )
 
-            Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-        }
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = viewModel.descState.value.text,
+                        onValueChange = {
+                            viewModel.setDescTitle(StandardTextFieldState(text = it))
+                        },
+                        textStyle = MaterialTheme.typography.bodyMedium,
+                        label = {
+                            Text(
+                                text = "Encouragement",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Description,
+                                contentDescription = "habit_description_icon",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        singleLine = false,
+                        minLines = 5,
+                        colors = TextFieldDefaults.textFieldColors(MaterialTheme.colorScheme.onBackground)
+                    )
 
-        Column(modifier = Modifier.fillMaxWidth()) {
+                    Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = "Select Icon",
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Right,
-                modifier = Modifier.padding(horizontal = 10.dp)
-            )
 
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 45.dp),
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-
-                items(HabitConstants.HABIT_ICON_LIST) { habitIcon ->
-                    val backgroundColor =
-                        if (habitIcon.icon == viewModel.habitIcon.value) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
-                    Card(
+                    OutlinedTextField(
                         modifier = Modifier
+                            .fillMaxWidth()
                             .clickable {
-                                // set new icon in viewmodel
-                                viewModel.setHabitIcon(habitIcon.icon)
+                                if (viewModel.currentHabitId.value != 0) {
+                                    viewModel.onError("Can't change start date and time")
+                                } else {
+                                    dialogState.setDialogState(DialogState.StartTimePickerDialog(true))
+
+                                }
                             },
-                        colors = CardDefaults.cardColors(containerColor = backgroundColor),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 4.dp,
-                            pressedElevation = 8.dp
+                        value = viewModel.startTimeState.value.text,
+                        onValueChange = {},
+                        readOnly = true,
+                        enabled = false,
+                        textStyle = MaterialTheme.typography.bodyMedium,
+                        label = {
+                            Text(
+                                text = "Start Time",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Timer,
+                                contentDescription = "habit_start_time_icon",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        singleLine = true,
+                        colors = TextFieldDefaults.textFieldColors(
+                            MaterialTheme.colorScheme.onBackground,
+                            disabledTextColor = MaterialTheme.colorScheme.onBackground
                         )
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                            .background(MaterialTheme.colorScheme.surface)
+                            .border(
+                                1.dp,
+                                MaterialTheme.colorScheme.onBackground,
+                                MaterialTheme.shapes.small
+                            )
+                            .padding(vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
 
                         Icon(
-                            painter = painterResource(id = habitIcon.icon),
-                            contentDescription = habitIcon.name,
-                            tint = Color.Unspecified,
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .size(40.dp)
+                            imageVector = Icons.Filled.Notifications,
+                            contentDescription = "notification icon",
+                            modifier = Modifier.padding(start = 8.dp)
                         )
 
+                        Text(
+                            text = "Notification",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier
+                                .padding(start = 16.dp)
+                                .weight(1f)
+                        )
+
+                        RadioButton(selected = viewModel.notifyTypeState.value, onClick = {
+                            if (!viewModel.notifyTypeState.value && !hasNotificationPermission) {
+                                dialogState.setDialogState(DialogState.PermissionDialogState(true))
+                            }
+
+                            viewModel.setNotifyTypeState(!viewModel.notifyTypeState.value)
+                        })
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+
+                        Text(
+                            text = "Select Color",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            textAlign = TextAlign.Right
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(54.dp)
+                                .border(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.onBackground,
+                                    MaterialTheme.shapes.small
+                                )
+                                .background(
+                                    viewModel.habitColor.value.hexColorToIntColor,
+                                    MaterialTheme.shapes.small
+                                )
+                                .clickable {
+                                    dialogState.setDialogState(
+                                        DialogState.ColorSelectionDialogState(
+                                            true
+                                        )
+                                    )
+                                }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
                 }
             }
 
+            iconSelectUi(viewModel)
         }
+
+
+
 
     }
 
@@ -453,6 +419,61 @@ fun CreateHabitScreen(
 
 }
 
+private fun LazyListScope.iconSelectUi(
+    viewModel: CreateHabitViewModel
+) {
+    item {
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+
+            Text(
+                text = "Select Icon",
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Right,
+                modifier = Modifier.padding(horizontal = 10.dp)
+            )
+
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 45.dp),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.height(500.dp)
+            ) {
+
+                items(HabitConstants.HABIT_ICON_LIST) { habitIcon ->
+                    val backgroundColor =
+                        if (habitIcon.icon == viewModel.habitIcon.value) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
+                    Card(
+                        modifier = Modifier
+                            .clickable {
+                                // set new icon in viewmodel
+                                viewModel.setHabitIcon(habitIcon.icon)
+                            },
+                        colors = CardDefaults.cardColors(containerColor = backgroundColor),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 4.dp,
+                            pressedElevation = 8.dp
+                        )
+                    ) {
+
+                        Icon(
+                            painter = painterResource(id = habitIcon.icon),
+                            contentDescription = habitIcon.name,
+                            tint = Color.Unspecified,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .size(40.dp)
+                        )
+
+                    }
+                }
+            }
+
+        }
+    }
+}
+
 @Composable
 fun StartDateAndTimePicker(
     context: Context,
@@ -487,7 +508,7 @@ fun StartDateAndTimePicker(
                 calendar.set(Calendar.SECOND, 0)
 
                 selectedDate(
-                    "${calendar.get(Calendar.DAY_OF_MONTH)}-${calendar.get(Calendar.MONTH)}-${
+                    "${calendar.get(Calendar.DAY_OF_MONTH)}-${calendar.get(Calendar.MONTH)+1}-${
                         calendar.get(
                             Calendar.YEAR
                         )

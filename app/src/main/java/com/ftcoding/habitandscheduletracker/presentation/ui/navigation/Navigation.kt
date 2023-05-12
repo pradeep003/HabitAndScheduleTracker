@@ -29,7 +29,6 @@ fun Navigation(navController: NavHostController, padding: PaddingValues) {
         composable(route = Screen.HomeScreen.route) {
             HomeScreen()
         }
-
     }
 }
 

@@ -1,5 +1,6 @@
 package com.ftcoding.habitandscheduletracker.presentation.util
 
+import android.annotation.SuppressLint
 import android.graphics.Color.parseColor
 import androidx.compose.ui.graphics.Color
 import java.text.SimpleDateFormat
@@ -11,6 +12,9 @@ import java.util.*
 object Constants {
 
     const val  POST_NOTIFICATIONS = "android.permission.POST_NOTIFICATION"
+
+    @SuppressLint("ConstantLocale")
+    val OBJ = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
 
     val String.hexColorToIntColor
         get() = Color(parseColor(this))

@@ -1,9 +1,10 @@
 package com.ftcoding.habitandscheduletracker.presentation.setting_ui
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.MediaStore
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,7 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -38,6 +38,7 @@ import com.ftcoding.habitandscheduletracker.presentation.ui.navigation.Screen
 import com.ftcoding.habitandscheduletracker.presentation.util.Constants.hexColorToIntColor
 import com.ftcoding.habitandscheduletracker.presentation.util.state.DialogState
 import com.ftcoding.habitandscheduletracker.presentation.util.state.DialogsStateHandle
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,7 +63,7 @@ fun SettingScreen(
     // launcher for selecting new image from device
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
-    ) {uri ->
+    ) { uri ->
         if (uri != null) {
             val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
             context.contentResolver.takePersistableUriPermission(uri, flag)
@@ -209,18 +210,18 @@ fun SettingScreen(
         Button(
             elevation = ButtonDefaults.buttonElevation(8.dp),
             onClick = {
-                    viewModel.getAllScheduleEvent()?.forEach { event ->
-                        context.scheduleNotification(
-                            isAlarm = event.alarmType,
-                            id = event.eventId,
-                            eventName = event.name,
-                            eventDesc = event.description,
-                            eventStartHour = event.start.hour,
-                            eventStartMin = event.start.minute,
-                            eventIcon = event.icon,
-                            repeatDayList = event.repeatDayList.toIntArray()
-                        )
-                    }
+                viewModel.getAllScheduleEvent()?.forEach { event ->
+                    context.scheduleNotification(
+                        isAlarm = event.alarmType,
+                        id = event.eventId,
+                        eventName = event.name,
+                        eventDesc = event.description,
+                        eventStartHour = event.start.hour,
+                        eventStartMin = event.start.minute,
+                        eventIcon = event.icon,
+                        repeatDayList = event.repeatDayList.toIntArray()
+                    )
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -246,13 +247,13 @@ fun SettingScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
-                .height(54.dp)
+                .height(56.dp)
                 .clickable {
                     navController.navigate(Screen.SelectRingtoneScreen.route)
 
                 }
                 .padding(horizontal = 8.dp),
-            value = if (viewModel.ringtone.value.songId < 0) "App default ringtone" else viewModel.ringtone.value.songTitle,
+            value = if (viewModel.user.value.ringtonePath.isEmpty()) "App default ringtone" else getFileName(context, Uri.parse(viewModel.user.value.ringtonePath)).toString(),
             onValueChange = {},
             readOnly = true,
             enabled = false,
@@ -381,6 +382,9 @@ fun SettingScreen(
                 )
             }
 
+            Text(text = "Note - If you want to display alarm when screen locked than please enable display on lock screen permission (mostly mi device)", style = MaterialTheme.typography.bodySmall)
+
+            Spacer(modifier = Modifier.height(4.dp))
             // navigate to  system app  settings
 
             Button(
@@ -405,28 +409,6 @@ fun SettingScreen(
     }
 
 
-// if ringtone picker dialog state is true open selectRingtoneDialog
-//    if (dialogState.selectRingtoneDialog) {
-//
-//        Dialog(
-//            properties = DialogProperties(
-//                dismissOnBackPress = false,
-//                dismissOnClickOutside = false
-//            ),
-//            onDismissRequest = {
-//            dialogState.setDialogState(
-//                DialogState.SelectRingtoneDialog(
-//                    false
-//                )
-//            )
-//        }) {
-//            SelectRingtoneDialog {
-//                dialogState.setDialogState(DialogState.SelectRingtoneDialog(false))
-//            }
-//        }
-//
-//    }
-
 // if color picker dialog state is true open colorPickerDialog
     if (dialogState.colorDialogState) {
 
@@ -447,4 +429,26 @@ fun SettingScreen(
     }
 
 
+}
+
+// get audio title from ui
+fun getFileName(context: Context, uri: Uri): String? {
+    var result: String? = null
+    if (uri.scheme == "content") {
+        val cursor = context.contentResolver.query(uri, null, null, null, null)
+        cursor.use { cursor ->
+            if (cursor != null && cursor.moveToFirst()) {
+                result =
+                    cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE))
+            }
+        }
+    }
+    if (result == null) {
+        result = uri.path
+        val cut = result!!.lastIndexOf('/')
+        if (cut != -1) {
+            result = result!!.substring(cut + 1)
+        }
+    }
+    return result
 }

@@ -1,15 +1,13 @@
 package com.ftcoding.habitandscheduletracker.notification
 
 import android.app.*
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.os.SystemClock
-import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.ftcoding.habitandscheduletracker.data.domain.models.habit.HabitModel
 import com.ftcoding.habitandscheduletracker.notification.receiver.HabitNotificationReceiver
-import com.ftcoding.habitandscheduletracker.util.HabitConstants
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,8 +21,13 @@ fun Context.showHabitNotification(
     desc: String = "We become what we repeatedly do",
     icon: Int
 ) {
+
+    val drawable = ContextCompat.getDrawable(this, icon)
+    val bitmap = drawable?.toBitmap()
+
     val builder = NotificationCompat.Builder(this, PRIMARY_HABIT_CHANNEL_ID)
         .setSmallIcon(icon)
+        .setLargeIcon(bitmap)
         .setContentTitle(title)
         .setContentText(desc)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -33,7 +36,6 @@ fun Context.showHabitNotification(
     notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     with(notificationManager) {
-        Log.e("tag", "notify")
         buildHabitChannel()
         val notification = builder.build()
         notify(notificationId, notification)

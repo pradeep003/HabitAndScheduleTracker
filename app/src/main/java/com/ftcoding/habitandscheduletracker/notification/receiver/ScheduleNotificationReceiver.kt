@@ -18,9 +18,9 @@ import com.ftcoding.habitandscheduletracker.util.HabitConstants.NOTIFICATION_TIT
 class ScheduleNotificationReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
 
-        intent?.getBooleanExtra(NOTIFICATION_IS_ALARM, true).let { isAlarm ->
-            intent?.getIntExtra(NOTIFICATION_ID, 0).let { id ->
-                intent?.getStringExtra(NOTIFICATION_TITLE)?.let { eventName ->
+        intent?.getBooleanExtra(NOTIFICATION_IS_ALARM, true)?.let { isAlarm ->
+            intent.getIntExtra(NOTIFICATION_ID, 0).let { id ->
+                intent.getStringExtra(NOTIFICATION_TITLE)?.let { eventName ->
                     intent.getStringExtra(NOTIFICATION_DESC)?.let { eventDesc ->
                         intent.getIntExtra(NOTIFICATION_START_HOUR, 0).let { eventStartHour ->
                             intent.getIntExtra(NOTIFICATION_START_MINUTE, 0).let { eventStartMin ->
@@ -29,13 +29,29 @@ class ScheduleNotificationReceiver : BroadcastReceiver() {
                                         .let { repeatDayList ->
                                             if (repeatDayList != null) {
 
+                                                Log.e("info", "$eventName $eventIcon $eventDesc")
+
                                                 context?.showNotificationWithFullScreenIntent(
                                                     eventName = eventName,
                                                     eventIcon = eventIcon,
-                                                    eventDesc = eventDesc
+                                                    eventDesc = eventDesc,
+                                                    isAlarm = isAlarm,
+                                                    notificationId = id
                                                 )
                                                 // start scheduling for next notification
-                                                if (id != null) {
+                                                context?.scheduleNotification(
+                                                    isAlarm = isAlarm ?: true,
+                                                    id = id,
+                                                    eventName = eventName,
+                                                    eventDesc = eventDesc,
+                                                    eventStartHour = eventStartHour,
+                                                    eventStartMin = eventStartMin,
+                                                    eventIcon = eventIcon,
+                                                    repeatDayList = repeatDayList
+                                                )
+
+                                                if ((Intent.ACTION_BOOT_COMPLETED) == intent.action) {
+                                                    // if device reboot reschedule notification
                                                     context?.scheduleNotification(
                                                         isAlarm = isAlarm ?: true,
                                                         id = id,
@@ -46,22 +62,6 @@ class ScheduleNotificationReceiver : BroadcastReceiver() {
                                                         eventIcon = eventIcon,
                                                         repeatDayList = repeatDayList
                                                     )
-                                                }
-
-                                                if ((Intent.ACTION_BOOT_COMPLETED) == intent.action) {
-                                                    // if device reboot reschedule notification
-                                                    if (id != null) {
-                                                        context?.scheduleNotification(
-                                                            isAlarm = isAlarm ?: true,
-                                                            id = id,
-                                                            eventName = eventName,
-                                                            eventDesc = eventDesc,
-                                                            eventStartHour = eventStartHour,
-                                                            eventStartMin = eventStartMin,
-                                                            eventIcon = eventIcon,
-                                                            repeatDayList = repeatDayList
-                                                        )
-                                                    }
                                                 }
                                             }
                                         }

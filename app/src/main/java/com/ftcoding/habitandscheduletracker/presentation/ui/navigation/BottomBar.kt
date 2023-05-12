@@ -71,7 +71,7 @@ fun RowScope.AddItem(
         if (selected) MaterialTheme.colorScheme.primary else Color.Transparent
 
     val contentColor =
-        if (selected) Color.White else Color.Black
+        if (selected) Color.White else MaterialTheme.colorScheme.onBackground
 
     Box(
         modifier = Modifier

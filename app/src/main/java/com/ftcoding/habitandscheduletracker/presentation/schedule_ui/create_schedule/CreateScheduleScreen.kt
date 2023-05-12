@@ -89,7 +89,6 @@ fun CreateScheduleScreen(
         viewModel.getEventById(eventId)
     }
 
-
     Column(modifier = Modifier.fillMaxWidth()) {
 
         val launcher = rememberLauncherForActivityResult(
@@ -535,7 +534,7 @@ fun CreateScheduleScreen(
 }
 
 
-fun LazyListScope.iconSelectUi(
+private fun LazyListScope.iconSelectUi(
     viewModel: CreateScheduleViewModel
 ) {
 

@@ -1,6 +1,8 @@
 package com.ftcoding.habitandscheduletracker.presentation.ui.theme
 
 import android.app.Activity
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
@@ -11,6 +13,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.ViewCompat
+import androidx.glance.LocalContext as GlanceLocalContext
 
 private val LightColors = lightColorScheme(
     primary = md_theme_light_primary,
@@ -151,23 +154,23 @@ fun HabitAndScheduleTrackerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
+    context: Context = LocalContext.current,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
         darkTheme -> darkColor(primaryColor = primaryColor)
         else -> lightColor(primaryColor = primaryColor)
     }
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
-            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
-        }
-    }
+//    val view = LocalView.current
+//    if (!view.isInEditMode) {
+//        SideEffect {
+//            (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
+//            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
+//        }
+//    }
 
     MaterialTheme(
         colorScheme = colorScheme,
@@ -175,3 +178,15 @@ fun HabitAndScheduleTrackerTheme(
         content = content
     )
 }
+
+@Composable
+internal fun HabitAndScheduleTrackerGlanceTheme (
+    glanceContext: Context = GlanceLocalContext.current,
+    darkTheme: Boolean = glanceContext.isDarkTheme,
+    content: @Composable () -> Unit
+) {
+    HabitAndScheduleTrackerTheme(darkTheme = darkTheme, context = glanceContext, content = content)
+}
+
+private val Context.isDarkTheme: Boolean
+    get() = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES

@@ -3,6 +3,7 @@ package com.ftcoding.habitandscheduletracker.presentation.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowLeft
 import androidx.compose.material.icons.filled.ArrowRight
@@ -91,8 +92,10 @@ fun DayWiseCalendar(
             }
 
 
+            // open the lazy row at current date position
             LazyRow(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                state = rememberLazyListState(initialFirstVisibleItemIndex = currentDate.value.dayOfMonth -1)
             ) {
                 items(currentDate.value.lengthOfMonth()) { date ->
 
@@ -108,7 +111,7 @@ fun DayWiseCalendar(
                             .clickable {
                                 selectedDate.value = currentLocalDate
                                 newSelectedDate(currentLocalDate)
-                                       },
+                            },
                         shape = MaterialTheme.shapes.extraLarge
                         ,
                         colors = CardDefaults.cardColors(
