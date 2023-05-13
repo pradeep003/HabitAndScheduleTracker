@@ -43,7 +43,12 @@ app glance widget
 <img src="https://github.com/pradeep003/HabitAndScheduleTracker/assets/42691019/5d925b98-ea2a-40e4-8d6a-62abe16dbe20" width="250"/>
 
 
-Note - This app is still in progress...!
+## Download
+
+You can download the latest version from release
+
+Note - Google play protect will give warning of app from unknow publisher or developer. Just press INSTALL ANYWAY and it will get installed.
+<img src="https://github.com/pradeep003/HabitAndScheduleTracker/assets/42691019/4ea9e2f6-e95b-41e2-b6ee-1c5965374cd2" width="250"/>
 
 
 
